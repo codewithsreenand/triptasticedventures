@@ -198,4 +198,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         allVideos.forEach(video => videoObserver.observe(video));
     }
+
+    // FAQ Accordion Logic
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    faqQuestions.forEach(question => {
+        question.addEventListener('click', () => {
+            const faqItem = question.parentElement;
+            const faqAnswer = faqItem.querySelector('.faq-answer');
+            const isActive = faqItem.classList.contains('active');
+            
+            // Close all other FAQ items
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+                item.querySelector('.faq-answer').style.maxHeight = null;
+            });
+            
+            // Toggle current FAQ item
+            if (!isActive) {
+                faqItem.classList.add('active');
+                faqAnswer.style.maxHeight = faqAnswer.scrollHeight + 'px';
+            }
+        });
+    });
 });
+
