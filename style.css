@@ -804,6 +804,165 @@ footer p {
     max-height: 500px;
 }
 
+/* Social Connect Section */
+#social-connect {
+    padding: 80px 20px;
+    background: linear-gradient(180deg, rgba(92, 110, 113, 0.03) 0%, var(--dark-bg) 100%);
+}
+
+.social-card {
+    max-width: 600px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.social-header {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin-bottom: 25px;
+}
+
+.profile-pic {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px solid var(--primary-green);
+    padding: 3px;
+    object-fit: cover;
+}
+
+.profile-meta h3 {
+    font-size: 1.5rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    color: var(--light-text);
+    letter-spacing: 0;
+}
+
+.username-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.verified-badge {
+    color: #3897f0;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+}
+
+.profile-fullname {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin-top: 4px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.profile-stats {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 25px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 15px 0;
+}
+
+.stat {
+    display: flex;
+    gap: 6px;
+    font-size: 1.05rem;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.stat-val {
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.stat-lbl {
+    color: var(--gray-blue);
+}
+
+.profile-bio {
+    margin-bottom: 30px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+    text-align: left;
+}
+
+.bio-line {
+    font-size: 0.95rem;
+    color: #e0e0e0;
+}
+
+.bio-followers {
+    font-size: 0.85rem;
+    color: var(--gray-blue);
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.social-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.social-actions .btn {
+    margin-top: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 1rem;
+    border-radius: 12px;
+    padding: 14px 20px;
+}
+
+.btn-insta {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    color: #ffffff;
+}
+
+.btn-insta:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(220, 39, 67, 0.2);
+}
+
+.btn-wa {
+    background: #25d366;
+    color: #ffffff;
+}
+
+.btn-wa:hover {
+    background: #20ba5a;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(37, 211, 102, 0.2);
+}
+
+.btn-yt {
+    background: #ff0000;
+    color: #ffffff;
+}
+
+.btn-yt:hover {
+    background: #cc0000;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 0, 0, 0.2);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     nav {
@@ -961,6 +1120,33 @@ footer p {
 
     .btn, .btn-deal, .btn-outline {
         padding: 12px 25px;
+        font-size: 0.95rem;
+    }
+
+    /* Social Connect Mobile */
+    .social-card {
+        padding: 25px 20px;
+    }
+    
+    .social-header {
+        gap: 15px;
+    }
+    
+    .profile-pic {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .profile-meta h3 {
+        font-size: 1.25rem;
+    }
+    
+    .profile-stats {
+        gap: 20px;
+        justify-content: space-between;
+    }
+    
+    .stat {
         font-size: 0.95rem;
     }
 }
