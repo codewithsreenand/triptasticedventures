@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Video Sound Logic
     const soundBtn = document.getElementById('sound-btn');
-    const bgVideo = document.getElementById('bg-video'); // redefined here but fine since using const at top level for rest of code
+    const bgVideo = document.getElementById('bg-video');
     const soundIcon = soundBtn.querySelector('i');
     let isMuted = true;
 
@@ -87,16 +87,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const videos = ['videos/rajasthan.mp4', 'videos/tajmahal.mp4'];
     let currentVideoIdx = 0;
 
+    // Direct src assignment is much more reliable on mobile Safari/Chrome than nested source tag manipulation
     bgVideo.addEventListener('ended', () => {
         currentVideoIdx = (currentVideoIdx + 1) % videos.length;
-        bgVideo.querySelector('source').src = videos[currentVideoIdx];
+        bgVideo.src = videos[currentVideoIdx];
         bgVideo.load();
-        bgVideo.play();
+        const playPromise = bgVideo.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log("Auto-play prevented after video change: ", error);
+            });
+        }
     });
 
+    // Toggle sound button logic
     soundBtn.addEventListener('click', () => {
         if (isMuted) {
             bgVideo.muted = false;
+            // On mobile, if the video was blocked and paused, clicking the sound button
+            // must explicitly trigger play so that it doesn't stay paused.
+            const playPromise = bgVideo.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Play failed on sound button click: ", error);
+                });
+            }
             soundIcon.classList.remove('fa-volume-mute');
             soundIcon.classList.add('fa-volume-up');
         } else {
@@ -110,13 +125,77 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mute video if scrolling away from home section
     window.addEventListener('scroll', () => {
         const homeSection = document.getElementById('home');
-        const rect = homeSection.getBoundingClientRect();
-        if (rect.bottom < 0 && !isMuted) {
-            // Scrolled past home section
-            bgVideo.muted = true;
-            soundIcon.classList.remove('fa-volume-up');
-            soundIcon.classList.add('fa-volume-mute');
-            isMuted = true;
+        if (homeSection) {
+            const rect = homeSection.getBoundingClientRect();
+            if (rect.bottom < 0 && !isMuted) {
+                // Scrolled past home section
+                bgVideo.muted = true;
+                soundIcon.classList.remove('fa-volume-up');
+                soundIcon.classList.add('fa-volume-mute');
+                isMuted = true;
+            }
         }
     });
+
+    // Fallback: try to play the background video immediately, and hook up user interaction play triggers if blocked
+    const attemptAutoplay = () => {
+        const playPromise = bgVideo.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log("Autoplay blocked. Adding fallback user interaction listeners.", error);
+                
+                const playOnGesture = () => {
+                    const innerPlayPromise = bgVideo.play();
+                    if (innerPlayPromise !== undefined) {
+                        innerPlayPromise.then(() => {
+                            // Successfully started video, remove triggers
+                            document.removeEventListener('click', playOnGesture);
+                            document.removeEventListener('touchstart', playOnGesture);
+                        }).catch(err => {
+                            console.log("Failed to play on user gesture: ", err);
+                        });
+                    }
+                };
+                
+                document.addEventListener('click', playOnGesture);
+                document.addEventListener('touchstart', playOnGesture);
+            });
+        }
+    };
+    attemptAutoplay();
+
+    // IntersectionObserver for all videos to play/pause dynamically depending on visibility.
+    // This is highly optimal for mobile performance and battery life.
+    const allVideos = document.querySelectorAll('video');
+    if ('IntersectionObserver' in window) {
+        const videoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const video = entry.target;
+                if (entry.isIntersecting) {
+                    // Try to play when in viewport
+                    const playPromise = video.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            console.log("Observer play blocked: ", error);
+                            
+                            // Try to play on interaction as fallback
+                            const playOnGesture = () => {
+                                video.play().then(() => {
+                                    document.removeEventListener('click', playOnGesture);
+                                    document.removeEventListener('touchstart', playOnGesture);
+                                }).catch(err => {});
+                            };
+                            document.addEventListener('click', playOnGesture);
+                            document.addEventListener('touchstart', playOnGesture);
+                        });
+                    }
+                } else {
+                    // Pause when scrolled out of view to save battery and data
+                    video.pause();
+                }
+            });
+        }, { threshold: 0.1 });
+
+        allVideos.forEach(video => videoObserver.observe(video));
+    }
 });
